@@ -3,8 +3,8 @@
 /**
  * Fired during plugin activation
  *
- * @link       https://paystack.com
- * @since      1.0.0
+ * @link  https://paystack.com
+ * @since 1.0.0
  *
  * @package    Paystack_Give
  * @subpackage Paystack_Give/includes
@@ -20,17 +20,19 @@
  * @subpackage Paystack_Give/includes
  * @author     Paystack <support@paystack.com>
  */
-class Paystack_Give_Activator {
+class Paystack_Give_Activator
+{
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function activate() {
+    /**
+     * Short Description. (use period)
+     *
+     * Long Description.
+     *
+     * @since 1.0.0
+     */
+    public static function activate() 
+    {
 
-	}
+    }
 
 }

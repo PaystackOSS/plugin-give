@@ -3,8 +3,8 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       https://paystack.com
- * @since      1.0.0
+ * @link  https://paystack.com
+ * @since 1.0.0
  *
  * @package    Paystack_Give
  * @subpackage Paystack_Give/includes
@@ -20,17 +20,19 @@
  * @subpackage Paystack_Give/includes
  * @author     Paystack <support@paystack.com>
  */
-class Paystack_Give_Deactivator {
+class Paystack_Give_Deactivator
+{
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function deactivate() {
+    /**
+     * Short Description. (use period)
+     *
+     * Long Description.
+     *
+     * @since 1.0.0
+     */
+    public static function deactivate() 
+    {
 
-	}
+    }
 
 }

@@ -5,8 +5,8 @@
  *
  * This file is used to markup the admin-facing aspects of the plugin.
  *
- * @link       https://paystack.com
- * @since      1.0.0
+ * @link  https://paystack.com
+ * @since 1.0.0
  *
  * @package    Paystack_Give
  * @subpackage Paystack_Give/admin/partials
