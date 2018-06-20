@@ -178,7 +178,7 @@ class Paystack_Give
          */
         function give_paystack_register_gateway($gateways)
         {
-            $gateways['give_paystack'] = array(
+            $gateways['paystack'] = array(
                 'admin_label'    => esc_attr__('Paystack', 'paystack-give'),
                 'checkout_label' => esc_attr__('Pay via Paystack', 'paystack-give')
             );
@@ -259,6 +259,90 @@ class Paystack_Give
 
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+
+
+        function give_paystack_credit_card_form($form_id, $echo = true)
+        {
+            $billing_fields_enabled = give_get_option('paystack_billing_details');
+
+            if ($billing_fields_enabled == 'enabled') {
+                do_action('give_after_cc_fields');
+            } else {
+                //Remove Address Fields if user has option enabled
+                remove_action('give_after_cc_fields', 'give_default_cc_address_fields');
+            }
+            return $form_id;
+        }
+        add_action('give_paystack_cc_form', 'give_paystack_credit_card_form');
+
+        /**
+         * This action will run the function attached to it when it's time to process the donation 
+         * submission.
+         **/
+        function give_process_paystack_purchase($purchase_data)
+        {
+            $payment_data = array(
+                'price'           => $purchase_data['price'],
+                'give_form_title' => $purchase_data['post_data']['give-form-title'],
+                'give_form_id'    => intval($purchase_data['post_data']['give-form-id']),
+                'give_price_id'   => isset($purchase_data['post_data']['give-price-id']) ? $purchase_data['post_data']['give-price-id'] : '',
+                'date'            => $purchase_data['date'],
+                'email'           => $purchase_data['user_email'],
+                'purchase_key'    => $purchase_data['purchase_key'],
+                'currency'        => give_get_currency(),
+                'user_info'       => $purchase_data['user_info'],
+                'status'          => 'pending', 
+                'gateway'         => 'paystack'
+            );
+
+            if (give_is_test_mode()) {
+                $secret_key = give_get_option('paystack_test_secret_key');
+                $public_key = give_get_option('paystack_test_public_key');
+            } else {
+                $secret_key = give_get_option('paystack_live_secret_key');
+                $public_key = give_get_option('paystack_live_public_key');
+            }
+
+            echo "
+                <script src='https://js.paystack.co/v1/inline.js'></script>
+                <script>
+                function payWithPaystack(){
+                    var handler = PaystackPop.setup({
+                    key: '$public_key',
+                    email: '${payment_data['email']}',
+                    amount: ${payment_data['price']} * 100,
+                    ref: ''+Math.floor((Math.random() * 1000000000) + 1),
+                    firstname: '${payment_data['email']}',
+                    lastname: '${payment_data['email']}',
+                    currency: '${payment_data['currency']}',
+                    metadata: {
+                        custom_fields: [
+                            {
+                                display_name: 'Mobile Number',
+                                variable_name: 'mobile_number',
+                                value: '+2348012345678'
+                            }
+                        ]
+                    },
+                    callback: function(response){
+                        
+                    },
+                    onClose: function(){
+                        window.history.back();
+                    }
+                    });
+                    handler.openIframe();
+                }
+
+                window.onload = function() {
+                    payWithPaystack();
+                }
+                </script>
+            ";
+
+        }
+
+        add_action('give_gateway_paystack', 'give_process_paystack_purchase');
 
     }
 

@@ -116,13 +116,7 @@ class Paystack_Give_Admin
         *        Administration Menus: http://codex.wordpress.org/Administration_Menus
         *
         */
-        add_submenu_page(
-            'edit.php?post_type=give_forms', 
-            __('Paystack Settings', 'textdomain'),
-            __('Paystack', 'textdomain'), 
-            'manage_options', $this->plugin_name, 
-            array($this, 'display_plugin_setup_page')
-        );
+        
     }
 
     /**
@@ -137,7 +131,7 @@ class Paystack_Give_Admin
         *  Documentation : https://codex.wordpress.org/Plugin_API/Filter_Reference/plugin_action_links_(plugin_file_name)
         */
         $settings_link = array(
-        '<a href="' . admin_url('edit.php?post_type=give_forms&page=give-settings&tab=gateways') . '">' . __('Settings', $this->plugin_name) . '</a>',
+        '<a href="' . admin_url('edit.php?post_type=give_forms&page=give-settings&tab=gateways&section=paystack') . '">' . __('Settings', $this->plugin_name) . '</a>',
         );
         return array_merge($settings_link, $links);
 
