@@ -30,7 +30,7 @@
  */
 class Paystack_Give
 {
-    
+
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
      * the plugin.
@@ -40,6 +40,8 @@ class Paystack_Give
      * @var    Paystack_Give_Loader    $loader    Maintains and registers all hooks for the plugin.
      */
     protected $loader;
+
+    const API_QUERY_VAR = 'paystack-give-api';
 
     /**
      * The unique identifier of this plugin.
@@ -68,9 +70,9 @@ class Paystack_Give
      *
      * @since 1.0.0
      */
-    public function __construct() 
+    public function __construct()
     {
-        if (defined('PLUGIN_NAME_VERSION') ) {
+        if (defined('PLUGIN_NAME_VERSION')) {
             $this->version = PLUGIN_NAME_VERSION;
         } else {
             $this->version = '1.0.0';
@@ -99,7 +101,7 @@ class Paystack_Give
      * @since  1.0.0
      * @access private
      */
-    private function load_dependencies() 
+    private function load_dependencies()
     {
 
         /**
@@ -115,7 +117,8 @@ class Paystack_Give
         include_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paystack-give-i18n.php';
 
         /**
-         * The class responsible for defining all actions that occur in the admin area.
+         * The class responsible for defining all actions that occur in the admin
+         * area.
          */
         include_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paystack-give-admin.php';
 
@@ -138,7 +141,7 @@ class Paystack_Give
      * @since  1.0.0
      * @access private
      */
-    private function set_locale() 
+    private function set_locale()
     {
 
         $plugin_i18n = new Paystack_Give_i18n();
@@ -154,7 +157,7 @@ class Paystack_Give
      * @since  1.0.0
      * @access private
      */
-    private function define_admin_hooks() 
+    private function define_admin_hooks()
     {
 
         $plugin_admin = new Paystack_Give_Admin($this->get_plugin_name(), $this->get_version());
@@ -171,16 +174,16 @@ class Paystack_Give
 
         /**
          * Register gateway so it shows up as an option in the Give gateway settings
-         * 
+         *
          * @param array $gateways
-         * 
+         *
          * @return array
          */
         function give_paystack_register_gateway($gateways)
         {
             $gateways['paystack'] = array(
-                'admin_label'    => esc_attr__('Paystack', 'paystack-give'),
-                'checkout_label' => esc_attr__('Pay via Paystack', 'paystack-give')
+                'admin_label' => esc_attr__('Paystack', 'paystack-give'),
+                'checkout_label' => esc_attr__('Pay via Paystack', 'paystack-give'),
             );
             return $gateways;
         }
@@ -195,7 +198,7 @@ class Paystack_Give
                     'name' => __('Paystack', 'paystack-give'),
                     'desc' => '',
                     'type' => 'give_title',
-                    'id'   => 'give_title_paystack',
+                    'id' => 'give_title_paystack',
                 ),
                 array(
                     'name' => __('Test Secret Key', 'paystack-give'),
@@ -226,23 +229,43 @@ class Paystack_Give
                     'row_classes' => 'give-paystack-live-public-key',
                 ),
                 array(
-                    'name'    => __('Billing Details', 'paystack-give'),
-                    'desc'    => __('This will enable you to collect donor details. This is not required by Paystack (except email) but you might need to collect all information for record purposes', 'paystack-give'),
-                    'id'      => 'paystack_billing_details',
-                    'type'    => 'radio_inline',
+                    'name' => __('Billing Details', 'paystack-give'),
+                    'desc' => __('This will enable you to collect donor details. This is not required by Paystack (except email) but you might need to collect all information for record purposes', 'paystack-give'),
+                    'id' => 'paystack_billing_details',
+                    'type' => 'radio_inline',
                     'default' => 'disabled',
                     'options' => array(
-                        'enabled'  => __('Enabled', 'paystack-give'),
+                        'enabled' => __('Enabled', 'paystack-give'),
                         'disabled' => __('Disabled', 'paystack-give'),
-                    )
-                )
+                    ),
+                ),
             );
 
             return array_merge($settings, $check_settings);
         }
 
         add_filter('give_settings_gateways', 'give_paystack_settings');
-        
+
+        add_action('parse_request', array($this, 'handle_api_requests'), 0);
+
+    }
+
+    public function handle_api_requests()
+    {
+
+        global $wp;
+        if (!empty($_GET[Paystack_Give::API_QUERY_VAR])) { // WPCS: input var okay, CSRF ok.
+            $wp->query_vars[Paystack_Give::API_QUERY_VAR] = sanitize_key(wp_unslash($_GET[Paystack_Give::API_QUERY_VAR])); // WPCS: input var okay, CSRF ok.
+
+            $key = $wp->query_vars[Paystack_Give::API_QUERY_VAR];
+            if ($key && ($key === 'verify') && isset($_GET['reference'])) {
+                // handle verification here
+                $this->verify_transaction();
+                die();
+            }
+
+        }
+
     }
 
     /**
@@ -260,7 +283,6 @@ class Paystack_Give
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
 
-
         function give_paystack_credit_card_form($form_id, $echo = true)
         {
             $billing_fields_enabled = give_get_option('paystack_billing_details');
@@ -276,69 +298,104 @@ class Paystack_Give
         add_action('give_paystack_cc_form', 'give_paystack_credit_card_form');
 
         /**
-         * This action will run the function attached to it when it's time to process the donation 
+         * This action will run the function attached to it when it's time to process the donation
          * submission.
          **/
         function give_process_paystack_purchase($purchase_data)
         {
             $payment_data = array(
-                'price'           => $purchase_data['price'],
+                'price' => $purchase_data['price'],
                 'give_form_title' => $purchase_data['post_data']['give-form-title'],
-                'give_form_id'    => intval($purchase_data['post_data']['give-form-id']),
-                'give_price_id'   => isset($purchase_data['post_data']['give-price-id']) ? $purchase_data['post_data']['give-price-id'] : '',
-                'date'            => $purchase_data['date'],
-                'email'           => $purchase_data['user_email'],
-                'purchase_key'    => $purchase_data['purchase_key'],
-                'currency'        => give_get_currency(),
-                'user_info'       => $purchase_data['user_info'],
-                'status'          => 'pending', 
-                'gateway'         => 'paystack'
+                'give_form_id' => intval($purchase_data['post_data']['give-form-id']),
+                'give_price_id' => isset($purchase_data['post_data']['give-price-id']) ? $purchase_data['post_data']['give-price-id'] : '',
+                'date' => $purchase_data['date'],
+                'user_email' => $purchase_data['user_email'],
+                'purchase_key' => $purchase_data['purchase_key'],
+                'currency' => give_get_currency(),
+                'user_info' => $purchase_data['user_info'],
+                'status' => 'pending',
+                'gateway' => 'paystack',
             );
 
-            if (give_is_test_mode()) {
-                $secret_key = give_get_option('paystack_test_secret_key');
-                $public_key = give_get_option('paystack_test_public_key');
+            // Record the pending payment
+            $payment = give_insert_payment($payment_data);
+
+            if (!$payment) {
+                // Record the error
+                give_record_gateway_error(__('Payment Error', 'give'), sprintf(__('Payment creation failed before sending donor to Paystack. Payment data: %s', 'give'), json_encode($payment_data)), $payment);
+                // Problems? send back
+                give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway']);
             } else {
-                $secret_key = give_get_option('paystack_live_secret_key');
-                $public_key = give_get_option('paystack_live_public_key');
-            }
+                //Begin processing payment
+                if (give_is_test_mode()) {
+                    $public_key = give_get_option('paystack_test_public_key');
+                    $secret_key = give_get_option('paystack_test_secret_key');
+                } else {
+                    $public_key = give_get_option('paystack_live_public_key');
+                    $secret_key = give_get_option('paystack_live_secret_key');
+                }
 
-            echo "
-                <script src='https://js.paystack.co/v1/inline.js'></script>
-                <script>
-                function payWithPaystack(){
-                    var handler = PaystackPop.setup({
-                    key: '$public_key',
-                    email: '${payment_data['email']}',
-                    amount: ${payment_data['price']} * 100,
-                    ref: ''+Math.floor((Math.random() * 1000000000) + 1),
-                    firstname: '${payment_data['email']}',
-                    lastname: '${payment_data['email']}',
-                    currency: '${payment_data['currency']}',
-                    metadata: {
-                        custom_fields: [
-                            {
-                                display_name: 'Mobile Number',
-                                variable_name: 'mobile_number',
-                                value: '+2348012345678'
-                            }
-                        ]
-                    },
-                    callback: function(response){
-                        
-                    },
-                    onClose: function(){
-                        window.history.back();
+                $ref = $purchase_data['purchase_key'];// . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
+                $verify_url = home_url() . '?' . http_build_query(
+                    [
+                        Paystack_Give::API_QUERY_VAR => 'verify',
+                        'reference' => $ref,
+                    ]
+                );
+
+                echo "
+                    <script src='https://js.paystack.co/v1/inline.js'></script>
+                    <script
+                        src='https://code.jquery.com/jquery-3.3.1.min.js'
+                        integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8='
+                        crossorigin='anonymous'>
+                    </script>
+                    <script>
+                    function payWithPaystack(){
+                        var handler = PaystackPop.setup({
+                        key: '$public_key',
+                        email: '${payment_data['user_email']}',
+                        amount: ${payment_data['price']} * 100,
+                        ref: '$ref',
+                        firstname: '{$payment_data['user_info']['first_name']}',
+                        lastname: '{$payment_data['user_info']['last_name']}',
+                        // currency: '{give_get_currency()}',
+                        currency: 'NGN',
+                        metadata: {
+                            custom_fields: [
+                                {
+                                    display_name: 'Form Title',
+                                    variable_name: 'form_title',
+                                    value: '${payment_data['give_form_title']}'
+                                }
+                            ]
+                        },
+                        callback: function(response){
+                            if(response.reference!=='$ref'){return;}
+                            $.ajax({
+                                url: '$verify_url',
+                                method: 'post',
+                                success: function (data) {
+                                    console.log(data)
+                                },
+                                error: function(err){
+                                    console.log(err);
+                                }
+                            })
+                        },
+                        onClose: function(){
+                            window.history.back();
+                        }
+                        });
+                        handler.openIframe();
                     }
-                    });
-                    handler.openIframe();
-                }
 
-                window.onload = function() {
-                    payWithPaystack();
-                }
-                </script>
-            ";
+                    window.onload = function() {
+                        payWithPaystack();
+                    }
+                    </script>
+                ";
+            }
 
         }
 
@@ -351,7 +408,7 @@ class Paystack_Give
      *
      * @since 1.0.0
      */
-    public function run() 
+    public function run()
     {
         $this->loader->run();
     }
@@ -363,7 +420,7 @@ class Paystack_Give
      * @since  1.0.0
      * @return string    The name of the plugin.
      */
-    public function get_plugin_name() 
+    public function get_plugin_name()
     {
         return $this->plugin_name;
     }
@@ -374,9 +431,10 @@ class Paystack_Give
      * @since  1.0.0
      * @return Paystack_Give_Loader    Orchestrates the hooks of the plugin.
      */
-    public function get_loader() 
+    public function get_loader()
     {
         return $this->loader;
+
     }
 
     /**
@@ -385,9 +443,67 @@ class Paystack_Give
      * @since  1.0.0
      * @return string    The version number of the plugin.
      */
-    public function get_version() 
+    public function get_version()
     {
         return $this->version;
+    }
+
+    public function Verify_transaction()
+    {
+        $ref = $_GET['reference'];
+        if (give_is_test_mode()) {
+            $secret_key = give_get_option('paystack_test_secret_key');
+        } else {
+            $public_key = give_get_option('paystack_live_public_key');
+        }
+
+        $curl = curl_init();
+
+        curl_setopt_array(
+            $curl, array(
+                CURLOPT_URL => "https://api.paystack.co/transaction/verify/" . $ref,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer $secret_key",
+                    "Cache-Control: no-cache",
+                ),
+            )
+        );
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            $result = json_decode($response, true);
+
+            if ($result) {
+                if (isset($result['data'])) {
+                    //something came in
+                    if ($result['data']['status'] == 'success') {
+                        // the transaction was successful, you can deliver value
+                        give_update_payment_status($payment, 'complete');
+                        give_send_to_success_page();
+                        echo "Transaction was successful";
+                    } else {
+                        // the transaction was not successful, do not deliver value'
+                        give_update_payment_status($payment, 'failed');
+                        give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway']);
+                        echo "Transaction was not successful: Last gateway response was: " . $result['data']['gateway_response'];
+                    }
+                } else {
+                    echo isset($result['message']) ? $result['message'] : 'An unexpected error occurred';
+                }
+            }
+        }
     }
 
 }
