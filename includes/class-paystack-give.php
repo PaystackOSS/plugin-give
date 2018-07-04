@@ -183,7 +183,7 @@ class Paystack_Give
         {
             $gateways['paystack'] = array(
                 'admin_label' => esc_attr__('Paystack', 'paystack-give'),
-                'checkout_label' => esc_attr__('Pay via Paystack', 'paystack-give'),
+                'checkout_label' => esc_attr__('Paystack', 'paystack-give'),
             );
             return $gateways;
         }
@@ -335,7 +335,7 @@ class Paystack_Give
                     $secret_key = give_get_option('paystack_live_secret_key');
                 }
 
-                $ref = $purchase_data['purchase_key'];// . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
+                $ref = $purchase_data['purchase_key']; // . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
                 $verify_url = home_url() . '?' . http_build_query(
                     [
                         Paystack_Give::API_QUERY_VAR => 'verify',
@@ -376,10 +376,12 @@ class Paystack_Give
                                 url: '$verify_url',
                                 method: 'post',
                                 success: function (data) {
-                                    console.log(data)
+                                    dx = JSON.parse(data);
+                                    window.location.replace(dx.url);
                                 },
                                 error: function(err){
                                     console.log(err);
+                                    window.history.back();
                                 }
                             })
                         },
@@ -451,6 +453,12 @@ class Paystack_Give
     public function Verify_transaction()
     {
         $ref = $_GET['reference'];
+        $payment = give_get_payment_by('key', $ref);
+        // die(json_encode($payment));
+
+        if ($payment === false) {
+            die('not a valid ref');
+        }
         if (give_is_test_mode()) {
             $secret_key = give_get_option('paystack_test_secret_key');
         } else {
@@ -490,15 +498,25 @@ class Paystack_Give
                     //something came in
                     if ($result['data']['status'] == 'success') {
                         // the transaction was successful, you can deliver value
-                        give_update_payment_status($payment, 'complete');
-                        give_send_to_success_page();
-                        echo "Transaction was successful";
+                        give_update_payment_status($payment->ID, 'complete');
+                        echo json_encode(
+                            [
+                                'url' => give_get_success_page_uri(),
+                                'status' => 'given',
+                            ]
+                        );
                     } else {
                         // the transaction was not successful, do not deliver value'
-                        give_update_payment_status($payment, 'failed');
-                        give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway']);
-                        echo "Transaction was not successful: Last gateway response was: " . $result['data']['gateway_response'];
+                        give_update_payment_status($payment->ID, 'failed');
+                        give_insert_payment_note($payment, 'ERROR: ' . $result['data']['message']);
+                        echo json_encode(
+                            [
+                                'status' => 'not-given',
+                                'message' => "Transaction was not successful: Last gateway response was: " . $result['data']['gateway_response'],
+                            ]
+                        );
                     }
+
                 } else {
                     echo isset($result['message']) ? $result['message'] : 'An unexpected error occurred';
                 }
