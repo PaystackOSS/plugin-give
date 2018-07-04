@@ -1,114 +1,83 @@
-=== Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
-Donate link: https://paystack.com
-Tags: comments, spam
+=== Paystack Payment for Give ===
+Contributors: paystack, steveamaza
+Donate link: https://paystack.com/demo
+Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tested up to: 4.9
+Stable tag: 1.0
+Requires PHP: 5.6
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+The Paystack Payment for Give allows site owners from Nigeria and Ghana to accept donations from their customers, anywhere on the Give plugin platform.  
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+Give is one the foremost WordPress donation plugins. It's robust, flexible, and easy to use.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+The **Paystack Payment for Give** allows site owners from Nigeria and Ghana to accept payments from their customers, anywhere.
 
-A few notes about the sections above:
+To be able to use the Paystack Payment for Give plugin, you must [have an account on Paystack](https://dashboard.paystack.com/) from which you will get Test and Live API keys to connect the plugin to your Paystack business.
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
-
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
-
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
-
+= Intuitive Dashboard =
+Use the Paystack dashboard to manage your customers, payments, and track your growth.
+ 
+= Fraud Protection =
+For Paystack, stopping fraud is top priority. We've used machine learning to minimize risks, reduce chargebacks and its associated costs. Paystack's fraud systems is built to learn. And so it's continually adapting to both local and international fraud.
+ 
+We screen every transaction by checking the IP, history, geolocation etc. to proactively identify fraudulent transactions. The entire network is used to prevent fraud. We learn from card and device fingerprints used to pay across different merchants.
+ 
+= Multiple Channels =
+We've done all the heavy lifting such that you can immediately start accepting payments across all channels. Allow your customers make payments via their credit/debit card, bank accounts, USSD and Mobile Money.
+ 
+= Paystack Go! =
+Track your business performance in the palm of your hand with Paystack Go! - This is a Progressive Web App that gives you access to your dashboard even when you are offline. You can easily look up transactions, track your businesses, and send invoices on the go.
+ 
+If your Paystack business has been activated, simply visit [go.paystack.com](https://go.paystack.com) on your mobile phone to use Paystack Go.
+ 
+= Join our growing community =
+ 
+When you download Paystack, you join a community of more than ten thousand merchants, developers, and enthusiasts. We're one of the fastest-growing open source communities online, and no matter your skill level we'd love to have you!
+ 
+If you’re interested in contributing to Paystack plugins and libraries we’ve got more than 100 contributors, and there’s always room for more. Head over to the [Paystack GitHub Repository](https://github.com/paystackHQ/) to find out how you can pitch in.
+ 
+We also have a developer community on Slack where we share product announcements, private events and discuss contributions to open source library and plugins. Join the Payslack Community [here](https://payslack.slack.com/).
+ 
 == Installation ==
-
-This section describes how to install the plugin and get it working.
-
-e.g.
-
-1. Upload `paystack-give.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
-
+ 
+= Minimum Requirements =
+ 
+* Confirm that your server can conclude a TLSv1.2 connection to Paystack's servers. More information about this requirement can be gleaned here: [TLS v1.2 requirement](https://developers.paystack.co/blog/tls-v12-requirement).
+* Minimum PHP requirements is PHP 5.6
+ 
+= Automatic installation =
+ 
+Automatic installation is the easiest option as WordPress handles the file transfers itself and you don’t need to leave your web browser. To do an automatic install of Paystack Payment for Give, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
+ 
+In the search field type “Paystack Payment for Give” and click Search Plugins. Once you’ve found our payment plugin you can view details about it such as the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
+ 
+= Manual installation =
+ 
+The manual installation method involves downloading our payment plugin and uploading it to your webserver via your favourite FTP application. The WordPress codex contains [instructions on how to do this here](https://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
+ 
+= Updating =
+ 
+Automatic updates should work like a charm; as always though, ensure you backup your site just in case.
+ 
 == Frequently Asked Questions ==
-
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
-
+ 
+= Where can I find help and documentation to understand Paystack? =
+ 
+You can find help and information on Paystack on our [Help Desk](https://paystack.com/help)
+ 
+= Where can I get support or talk to other users? =
+ 
+If you get stuck, you can ask for help in the [Paystack Payment for Give Plugin Forum](https://wordpress.org/support/plugin/paystack-payment-for-give. You can also directly email support@paystack.com for assistance.
+ 
+= Paystack Payment for Give is awesome! Can I contribute? =
+ 
+Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/paystack-give) :)
+ 
 == Screenshots ==
-
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
-
-== Changelog ==
-
-= 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
-
-== Upgrade Notice ==
-
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`
+ 
+1. The slick Paystack settings panel.
