@@ -246,6 +246,43 @@ class Paystack_Give
 
         add_filter('give_settings_gateways', 'give_paystack_settings');
 
+        /**
+         * Filter the currencies
+         * Note: you can register new currency by using this filter
+         *
+         * @since 1.8.15
+         *
+         * @param array $currencies
+         */
+        function give_paystack_add_currencies($currencies)
+        {
+            $add_currencies = array(
+                'NGN' => array(
+                    'admin_label' => sprintf(__('Nigerian Naira (%1$s)', 'give'), '&#8358;'),
+                    'symbol' => '&#8358;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => ',',
+                        'decimal_separator' => '.',
+                        'number_decimals' => 2,
+                    ),
+                ),
+                'GHS' => array(
+                    'admin_label' => sprintf(__('Ghana Cedis (%1$s)', 'give'), 'GHS'),
+                    'symbol' => 'GHS;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
+                )
+            );
+            return array_merge($add_currencies, $currencies);
+        }
+        
+        add_filter('give_currencies', 'give_paystack_add_currencies');
+
         add_action('parse_request', array($this, 'handle_api_requests'), 0);
 
     }
