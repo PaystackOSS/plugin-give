@@ -373,6 +373,8 @@ class Paystack_Give
                 }
 
                 $ref = $purchase_data['purchase_key']; // . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
+                $currency = give_get_currency();
+
                 $verify_url = home_url() . '?' . http_build_query(
                     [
                         Paystack_Give::API_QUERY_VAR => 'verify',
@@ -396,8 +398,7 @@ class Paystack_Give
                         ref: '$ref',
                         firstname: '{$payment_data['user_info']['first_name']}',
                         lastname: '{$payment_data['user_info']['last_name']}',
-                        // currency: '{give_get_currency()}',
-                        currency: 'NGN',
+                        currency: '$currency',
                         metadata: {
                             custom_fields: [
                                 {
@@ -409,6 +410,7 @@ class Paystack_Give
                         },
                         callback: function(response){
                             if(response.reference!=='$ref'){return;}
+                            $(document.body).addClass('show-loader');
                             $.ajax({
                                 url: '$verify_url',
                                 method: 'post',
@@ -433,6 +435,144 @@ class Paystack_Give
                         payWithPaystack();
                     }
                     </script>
+                    <div class='loader'>
+                        <div class='loader__spinner'>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div>
+                            </div><div></div><div></div><div></div><div></div><div></div>
+                        </div>
+                    </div>
+                    <style>
+                        .show-loader .loader {
+                            display: -webkit-box;
+                            display: -ms-flexbox;
+                            display: flex;
+                            -webkit-box-pack: center;
+                            -ms-flex-pack: center;
+                                justify-content: center;
+                            -webkit-box-align: center;
+                            -ms-flex-align: center;
+                                align-items: center;
+                            height: 100%;
+                            width: 100%;
+                        }
+                        .loader {
+                            display: none;
+                            text-align: center;
+                            // background-color: #404040;
+                        }
+                        @keyframes loader__spinner {
+                            0% {
+                                opacity: 1;
+                            }
+                            100% {
+                                opacity: 0;
+                            }
+                        }
+                        @-webkit-keyframes loader__spinner {
+                            0% {
+                                opacity: 1;
+                            }
+                            100% {
+                                opacity: 0;
+                            }
+                        }
+                        .loader__spinner {
+                            position: relative;
+                            display: inline-block;
+                        }
+                        .loader__spinner div {
+                            left: 95px;
+                            top: 35px;
+                            position: absolute;
+                            -webkit-animation: loader__spinner linear 1s infinite;
+                            animation: loader__spinner linear 1s infinite;
+                            background: #393939;
+                            width: 10px;
+                            height: 30px;
+                            border-radius: 40%;
+                            -webkit-transform-origin: 5px 65px;
+                            transform-origin: 5px 65px;
+                        }
+                        .loader__spinner div:nth-child(1) {
+                            -webkit-transform: rotate(0deg);
+                            transform: rotate(0deg);
+                            -webkit-animation-delay: -0.91667s;
+                            animation-delay: -0.91667s;
+                        }
+                        .loader__spinner div:nth-child(2) {
+                            -webkit-transform: rotate(30deg);
+                            transform: rotate(30deg);
+                            -webkit-animation-delay: -0.83333s;
+                            animation-delay: -0.83333s;
+                        }
+                        .loader__spinner div:nth-child(3) {
+                            -webkit-transform: rotate(60deg);
+                            transform: rotate(60deg);
+                            -webkit-animation-delay: -0.75s;
+                            animation-delay: -0.75s;
+                        }
+                        .loader__spinner div:nth-child(4) {
+                            -webkit-transform: rotate(90deg);
+                            transform: rotate(90deg);
+                            -webkit-animation-delay: -0.66667s;
+                            animation-delay: -0.66667s;
+                        }
+                        .loader__spinner div:nth-child(5) {
+                            -webkit-transform: rotate(120deg);
+                            transform: rotate(120deg);
+                            -webkit-animation-delay: -0.58333s;
+                            animation-delay: -0.58333s;
+                        }
+                        .loader__spinner div:nth-child(6) {
+                            -webkit-transform: rotate(150deg);
+                            transform: rotate(150deg);
+                            -webkit-animation-delay: -0.5s;
+                            animation-delay: -0.5s;
+                        }
+                        .loader__spinner div:nth-child(7) {
+                            -webkit-transform: rotate(180deg);
+                            transform: rotate(180deg);
+                            -webkit-animation-delay: -0.41667s;
+                            animation-delay: -0.41667s;
+                        }
+                            .loader__spinner div:nth-child(8) {
+                            -webkit-transform: rotate(210deg);
+                            transform: rotate(210deg);
+                            -webkit-animation-delay: -0.33333s;
+                            animation-delay: -0.33333s;
+                        }
+                        .loader__spinner div:nth-child(9) {
+                            -webkit-transform: rotate(240deg);
+                            transform: rotate(240deg);
+                            -webkit-animation-delay: -0.25s;
+                            animation-delay: -0.25s;
+                        }
+                        .loader__spinner div:nth-child(10) {
+                            -webkit-transform: rotate(270deg);
+                            transform: rotate(270deg);
+                            -webkit-animation-delay: -0.16667s;
+                            animation-delay: -0.16667s;
+                        }
+                        .loader__spinner div:nth-child(11) {
+                            -webkit-transform: rotate(300deg);
+                            transform: rotate(300deg);
+                            -webkit-animation-delay: -0.08333s;
+                            animation-delay: -0.08333s;
+                        }
+                        .loader__spinner div:nth-child(12) {
+                            -webkit-transform: rotate(330deg);
+                            transform: rotate(330deg);
+                            -webkit-animation-delay: 0s;
+                            animation-delay: 0s;
+                        }
+                        .loader__spinner {
+                            width: 40px;
+                            height: 40px;
+                            margin: auto;
+                            -webkit-transform: translate(-20px, -20px) scale(0.2) translate(20px, 20px);
+                            transform: translate(-20px, -20px) scale(0.2) translate(20px, 20px);
+                        }
+                    </style>
                 ";
             }
 
