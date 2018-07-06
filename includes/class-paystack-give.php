@@ -639,66 +639,49 @@ class Paystack_Give
         if (give_is_test_mode()) {
             $secret_key = give_get_option('paystack_test_secret_key');
         } else {
-            $public_key = give_get_option('paystack_live_public_key');
+            $secret_key = give_get_option('paystack_live_secret_key');
         }
 
-        $curl = curl_init();
+        $url = "https://api.paystack.co/transaction/verify/" . $ref;
 
-        curl_setopt_array(
-            $curl, array(
-                CURLOPT_URL => "https://api.paystack.co/transaction/verify/" . $ref,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_HTTPHEADER => array(
-                    "Authorization: Bearer $secret_key",
-                    "Cache-Control: no-cache",
-                ),
-            )
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $secret_key,
+            ),
         );
+        
+        $request = wp_remote_get($url, $args);
 
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-
-        curl_close($curl);
-
-        if ($err) {
-            echo "cURL Error #:" . $err;
-        } else {
-            $result = json_decode($response, true);
-
-            if ($result) {
-                if (isset($result['data'])) {
-                    //something came in
-                    if ($result['data']['status'] == 'success') {
-                        // the transaction was successful, you can deliver value
-                        give_update_payment_status($payment->ID, 'complete');
-                        echo json_encode(
-                            [
-                                'url' => give_get_success_page_uri(),
-                                'status' => 'given',
-                            ]
-                        );
-                    } else {
-                        // the transaction was not successful, do not deliver value'
-                        give_update_payment_status($payment->ID, 'failed');
-                        give_insert_payment_note($payment, 'ERROR: ' . $result['data']['message']);
-                        echo json_encode(
-                            [
-                                'status' => 'not-given',
-                                'message' => "Transaction was not successful: Last gateway response was: " . $result['data']['gateway_response'],
-                            ]
-                        );
-                    }
-
-                } else {
-                    echo isset($result['message']) ? $result['message'] : 'An unexpected error occurred';
-                }
-            }
+        if (is_wp_error($request)) {
+            return false; // Bail early
         }
+
+        $body = wp_remote_retrieve_body($request);
+
+        $result = json_decode($body);
+
+        // var_dump($result);
+
+        if ($result->data->status == 'success') {
+            // the transaction was successful, you can deliver value
+            give_update_payment_status($payment->ID, 'complete');
+            echo json_encode(
+                [
+                    'url' => give_get_success_page_uri(),
+                    'status' => 'given',
+                ]
+            );
+        } else {
+            // the transaction was not successful, do not deliver value'
+            give_update_payment_status($payment->ID, 'failed');
+            give_insert_payment_note($payment, 'ERROR: ' . $result->data->message);
+            echo json_encode(
+                [
+                    'status' => 'not-given',
+                    'message' => "Transaction was not successful: Last gateway response was: " . $result['data']['gateway_response'],
+                ]
+            );
+        }    
     }
 
 }
