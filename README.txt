@@ -72,7 +72,7 @@ You can find help and information on Paystack on our [Help Desk](https://paystac
  
 = Where can I get support or talk to other users? =
  
-If you get stuck, you can ask for help in the [Paystack Payment for Give Plugin Forum](https://wordpress.org/support/plugin/paystack-payment-for-give. You can also directly email support@paystack.com for assistance.
+If you get stuck, you can ask for help in the [Paystack Payment for Give Plugin Forum](https://wordpress.org/support/plugin/paystack-for-give). You can also directly email support@paystack.com for assistance.
  
 = Paystack Payment for Give is awesome! Can I contribute? =
  
