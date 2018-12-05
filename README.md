@@ -15,10 +15,12 @@ Install the [Paystack Payment for Give](https://wordpress.org/plugins/paystack-f
 * [Paystack Helpdesk](https://paystack.com/help)
 
 ## Support
-This repository is not suitable for general Paystack support. Please use the issue tracker for bug reports and feature requests directly related to this plugin. For general support, you can reach out by 
+ For bug reports and feature requests directly related to this plugin, please use the [issue tracker](https://wordpress.org/support/plugin/paystack-for-give/issues). 
 
-* sending a message from [our website](https://paystack.com/contact).
-* posting an issues on the plugin [support forum](https://wordpress.org/support/plugin/paystack-for-give).
+ For general support or questions about your Paystack account, you can reach out by sending a message from [our website](https://paystack.com/contact).
+
+## Community
+If you are a developer, please join our Developer Community on [Slack](https://slack.paystack.com).
 
 ## Contributing to Paystack Payment for Give
 
