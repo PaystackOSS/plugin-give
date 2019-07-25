@@ -28,6 +28,8 @@
  * @subpackage Paystack_Give/includes
  * @author     Paystack <support@paystack.com>
  */
+
+include_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paystack-plugin-tracker.php';
 class Paystack_Give
 {
 
@@ -405,6 +407,11 @@ class Paystack_Give
                                     display_name: 'Form Title',
                                     variable_name: 'form_title',
                                     value: '${payment_data['give_form_title']}'
+                                },
+                                {
+                                    display_name: 'Plugin',
+                                    variable_name: 'plugin',
+                                    value: 'give'
                                 }
                             ]
                         },
@@ -663,7 +670,21 @@ class Paystack_Give
         // var_dump($result);
 
         if ($result->data->status == 'success') {
+            
+            
+            //PSTK Logger
+            if (give_is_test_mode()) {
+                $pk = give_get_option('paystack_test_public_key');
+            } else {
+                $pk = give_get_option('paystack_live_public_key');
+            }
+                $pstk_logger =  new give_paystack_plugin_tracker('give',$pk);
+                $pstk_logger->log_transaction_success($ref);
+            //
+
+
             // the transaction was successful, you can deliver value
+            
             give_update_payment_status($payment->ID, 'complete');
             echo json_encode(
                 [
