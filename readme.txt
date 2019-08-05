@@ -3,8 +3,8 @@ Contributors: paystack, steveamaza
 Donate link: https://paystack.com/demo
 Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
-Tested up to: 4.9
-Stable tag: 1.0
+Tested up to: 5.2
+Stable tag: 1.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -81,3 +81,6 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 == Screenshots ==
  
 1. The slick Paystack settings panel.
+
+== Change Logs ==
+* Added plugin metrics tracker 
