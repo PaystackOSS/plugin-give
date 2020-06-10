@@ -10,6 +10,20 @@ If you are a developer, you can join our Developer Community on [Slack](https://
 
 Install the [Paystack Payment for Give](https://wordpress.org/plugins/paystack-for-give/) via the Plugins section of your WordPress Dashboard.
 
+
+## Running the paystack Give plugin on docker
+Contained within this repo, is a dockerfile and a docker-compose file to quickly spin up a wordpress and mysql container with the paystack Give plugin installed.
+
+### Prerequisites
+- Install [Docker](https://www.docker.com/)
+
+### Quick Steps
+- Create a `local.env` file off the `local.env.sample` in the root directory. Replace the `*******` with the right values
+- Run `docker-compose up` from the root directory to build and start the mysql and wordpress containers.
+- Visit `localhost:8000` on your browser to access and setup wordpress.
+- Run `docker-compose down` from the root directory to stop the containers.
+
+
 ## Documentation
 * [Paystack Documentation](https://developers.paystack.co/v1.0/docs/)
 * [Paystack Helpdesk](https://paystack.com/help)
