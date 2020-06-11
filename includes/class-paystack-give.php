@@ -183,68 +183,99 @@ class Paystack_Give
         {
             $gateways['paystack'] = array(
                 'admin_label' => esc_attr__('Paystack', 'paystack-give'),
-                'checkout_label' => esc_attr__('Paystack', 'paystack-give'),
+                'checkout_label' => esc_attr__('Pay with Paystack', 'paystack-give'),
             );
             return $gateways;
         }
 
         add_filter('give_payment_gateways', 'give_paystack_register_gateway', 1);
 
-        function give_paystack_settings($settings)
-        {
-
-            $check_settings = array(
-                array(
-                    'name' => __('Paystack', 'paystack-give'),
-                    'desc' => '',
-                    'type' => 'give_title',
-                    'id' => 'give_title_paystack',
-                ),
-                array(
-                    'name' => __('Test Secret Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Test Secret Key', 'paystack-give'),
-                    'id' => 'paystack_test_secret_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-test-secret-key',
-                ),
-                array(
-                    'name' => __('Test Public Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Test Public Key', 'paystack-give'),
-                    'id' => 'paystack_test_public_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-test-public-key',
-                ),
-                array(
-                    'name' => __('Live Secret Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Live Secret Key', 'paystack-give'),
-                    'id' => 'paystack_live_secret_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-live-secret-key',
-                ),
-                array(
-                    'name' => __('Live Public Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Live Public Key', 'paystack-give'),
-                    'id' => 'paystack_live_public_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-live-public-key',
-                ),
-                array(
-                    'name' => __('Billing Details', 'paystack-give'),
-                    'desc' => __('This will enable you to collect donor details. This is not required by Paystack (except email) but you might need to collect all information for record purposes', 'paystack-give'),
-                    'id' => 'paystack_billing_details',
-                    'type' => 'radio_inline',
-                    'default' => 'disabled',
-                    'options' => array(
-                        'enabled' => __('Enabled', 'paystack-give'),
-                        'disabled' => __('Disabled', 'paystack-give'),
-                    ),
-                ),
-            );
-
-            return array_merge($settings, $check_settings);
+        function give_paystack_register_payment_gateway_sections( $sections ) {
+	
+            $sections['paystack-settings'] = __( 'Paystack', 'paystack-give' );
+        
+            return $sections;
         }
+        
+        add_filter( 'give_get_sections_gateways', 'give_paystack_register_payment_gateway_sections' );
 
-        add_filter('give_settings_gateways', 'give_paystack_settings');
+        function give_paystack_register_payment_gateway_setting_fields( $settings ) {
+
+            switch ( give_get_current_setting_section() ) {
+        
+                case 'paystack-settings':
+                    $settings[] = array(
+                        'name' => __('Paystack', 'paystack-give'),
+                        'desc' => '',
+                        'type' => 'title',
+                        'id' => 'give_title_paystack',
+                    );
+
+                    $settings[] = array(
+                        'name' => __('Test Secret Key', 'paystack-give'),
+                        'desc' => __('Enter your Paystack Test Secret Key', 'paystack-give'),
+                        'id' => 'paystack_test_secret_key',
+                        'type' => 'text',
+                        'row_classes' => 'give-paystack-test-secret-key',
+                    );
+
+                    $settings[] = array(
+                        'name' => __('Test Public Key', 'paystack-give'),
+                        'desc' => __('Enter your Paystack Test Public Key', 'paystack-give'),
+                        'id' => 'paystack_test_public_key',
+                        'type' => 'text',
+                        'row_classes' => 'give-paystack-test-public-key',
+                    );
+
+                    $settings[] = array(
+                        'name' => __('Live Secret Key', 'paystack-give'),
+                        'desc' => __('Enter your Paystack Live Secret Key', 'paystack-give'),
+                        'id' => 'paystack_live_secret_key',
+                        'type' => 'text',
+                        'row_classes' => 'give-paystack-live-secret-key',
+                    );
+
+                    $settings[] = array(
+                        'name' => __('Live Public Key', 'paystack-give'),
+                        'desc' => __('Enter your Paystack Live Public Key', 'paystack-give'),
+                        'id' => 'paystack_live_public_key',
+                        'type' => 'text',
+                        'row_classes' => 'give-paystack-live-public-key',
+                    );
+
+                    $settings[] = array(
+                        'name' => __('Dev Key', 'paystack-give'),
+                        'desc' => __('Enter your Paystack Dev Key', 'paystack-give'),
+                        'id' => 'paystack_dev_key',
+                        'type' => 'text',
+                        'row_classes' => 'give-paystack-dev-key',
+                    );
+
+                    $settings[] = array(
+                        'name' => __('Billing Details', 'paystack-give'),
+                        'desc' => __('This will enable you to collect donor details. This is not required by Paystack (except email) but you might need to collect all information for record purposes', 'paystack-give'),
+                        'id' => 'paystack_billing_details',
+                        'type' => 'radio_inline',
+                        'default' => 'disabled',
+                        'options' => array(
+                            'enabled' => __('Enabled', 'paystack-give'),
+                            'disabled' => __('Disabled', 'paystack-give'),
+                        ),
+                    );
+
+                    $settings[] = array(
+                        'id'   => 'give_title_paystack',
+                        'type' => 'sectionend',
+                    );
+                    break;
+        
+            } // End switch().
+        
+            return $settings;
+        }
+        
+        // change the insta_for_give prefix to avoid collisions with other functions.
+        add_filter( 'give_get_settings_gateways', 'give_paystack_register_payment_gateway_setting_fields' );
 
         /**
          * Filter the currencies
@@ -382,6 +413,9 @@ class Paystack_Give
                     ]
                 );
 
+                $amount_in_kobo = $payment_data['price'] * 100;
+                $form_title = addslashes($payment_data['give_form_title']);
+
                 echo "
                     <script src='https://js.paystack.co/v1/inline.js'></script>
                     <script
@@ -393,8 +427,8 @@ class Paystack_Give
                     function payWithPaystack(){
                         var handler = PaystackPop.setup({
                         key: '$public_key',
-                        email: '${payment_data['user_email']}',
-                        amount: ${payment_data['price']} * 100,
+                        email: '{$payment_data['user_email']}',
+                        amount: '$amount_in_kobo',
                         ref: '$ref',
                         firstname: '{$payment_data['user_info']['first_name']}',
                         lastname: '{$payment_data['user_info']['last_name']}',
@@ -404,7 +438,7 @@ class Paystack_Give
                                 {
                                     display_name: 'Form Title',
                                     variable_name: 'form_title',
-                                    value: '${payment_data['give_form_title']}'
+                                    value: '$form_title'
                                 }
                             ]
                         },
@@ -435,145 +469,7 @@ class Paystack_Give
                         payWithPaystack();
                     }
                     </script>
-                    <div class='loader'>
-                        <div class='loader__spinner'>
-                            <div></div><div></div><div></div><div></div><div></div><div></div><div>
-                            </div><div></div><div></div><div></div><div></div><div></div>
-                        </div>
-                    </div>
-                    <style>
-                        .show-loader .loader {
-                            display: -webkit-box;
-                            display: -ms-flexbox;
-                            display: flex;
-                            -webkit-box-pack: center;
-                            -ms-flex-pack: center;
-                                justify-content: center;
-                            -webkit-box-align: center;
-                            -ms-flex-align: center;
-                                align-items: center;
-                            height: 100%;
-                            width: 100%;
-                        }
-                        .loader {
-                            display: none;
-                            text-align: center;
-                            // background-color: #404040;
-                        }
-                        @keyframes loader__spinner {
-                            0% {
-                                opacity: 1;
-                            }
-                            100% {
-                                opacity: 0;
-                            }
-                        }
-                        @-webkit-keyframes loader__spinner {
-                            0% {
-                                opacity: 1;
-                            }
-                            100% {
-                                opacity: 0;
-                            }
-                        }
-                        .loader__spinner {
-                            position: relative;
-                            display: inline-block;
-                        }
-                        .loader__spinner div {
-                            left: 95px;
-                            top: 35px;
-                            position: absolute;
-                            -webkit-animation: loader__spinner linear 1s infinite;
-                            animation: loader__spinner linear 1s infinite;
-                            background: #393939;
-                            width: 10px;
-                            height: 30px;
-                            border-radius: 40%;
-                            -webkit-transform-origin: 5px 65px;
-                            transform-origin: 5px 65px;
-                        }
-                        .loader__spinner div:nth-child(1) {
-                            -webkit-transform: rotate(0deg);
-                            transform: rotate(0deg);
-                            -webkit-animation-delay: -0.91667s;
-                            animation-delay: -0.91667s;
-                        }
-                        .loader__spinner div:nth-child(2) {
-                            -webkit-transform: rotate(30deg);
-                            transform: rotate(30deg);
-                            -webkit-animation-delay: -0.83333s;
-                            animation-delay: -0.83333s;
-                        }
-                        .loader__spinner div:nth-child(3) {
-                            -webkit-transform: rotate(60deg);
-                            transform: rotate(60deg);
-                            -webkit-animation-delay: -0.75s;
-                            animation-delay: -0.75s;
-                        }
-                        .loader__spinner div:nth-child(4) {
-                            -webkit-transform: rotate(90deg);
-                            transform: rotate(90deg);
-                            -webkit-animation-delay: -0.66667s;
-                            animation-delay: -0.66667s;
-                        }
-                        .loader__spinner div:nth-child(5) {
-                            -webkit-transform: rotate(120deg);
-                            transform: rotate(120deg);
-                            -webkit-animation-delay: -0.58333s;
-                            animation-delay: -0.58333s;
-                        }
-                        .loader__spinner div:nth-child(6) {
-                            -webkit-transform: rotate(150deg);
-                            transform: rotate(150deg);
-                            -webkit-animation-delay: -0.5s;
-                            animation-delay: -0.5s;
-                        }
-                        .loader__spinner div:nth-child(7) {
-                            -webkit-transform: rotate(180deg);
-                            transform: rotate(180deg);
-                            -webkit-animation-delay: -0.41667s;
-                            animation-delay: -0.41667s;
-                        }
-                            .loader__spinner div:nth-child(8) {
-                            -webkit-transform: rotate(210deg);
-                            transform: rotate(210deg);
-                            -webkit-animation-delay: -0.33333s;
-                            animation-delay: -0.33333s;
-                        }
-                        .loader__spinner div:nth-child(9) {
-                            -webkit-transform: rotate(240deg);
-                            transform: rotate(240deg);
-                            -webkit-animation-delay: -0.25s;
-                            animation-delay: -0.25s;
-                        }
-                        .loader__spinner div:nth-child(10) {
-                            -webkit-transform: rotate(270deg);
-                            transform: rotate(270deg);
-                            -webkit-animation-delay: -0.16667s;
-                            animation-delay: -0.16667s;
-                        }
-                        .loader__spinner div:nth-child(11) {
-                            -webkit-transform: rotate(300deg);
-                            transform: rotate(300deg);
-                            -webkit-animation-delay: -0.08333s;
-                            animation-delay: -0.08333s;
-                        }
-                        .loader__spinner div:nth-child(12) {
-                            -webkit-transform: rotate(330deg);
-                            transform: rotate(330deg);
-                            -webkit-animation-delay: 0s;
-                            animation-delay: 0s;
-                        }
-                        .loader__spinner {
-                            width: 40px;
-                            height: 40px;
-                            margin: auto;
-                            -webkit-transform: translate(-20px, -20px) scale(0.2) translate(20px, 20px);
-                            transform: translate(-20px, -20px) scale(0.2) translate(20px, 20px);
-                        }
-                    </style>
-                ";
+                    ";
             }
 
         }
