@@ -80,6 +80,15 @@ class Paystack_Give_Public
 
     }
 
+    public static function fetchPublicKey(){
+        if (give_is_test_mode()) {
+            $public_key = give_get_option('paystack_test_public_key');
+        } else {
+            $public_key = give_get_option('paystack_live_public_key');
+        }
+        return $public_key
+    }
+
     /**
      * Register the JavaScript for the public-facing side of the site.
      *
@@ -101,6 +110,10 @@ class Paystack_Give_Public
          */
 
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paystack-give-public.js', array( 'jquery' ), $this->version, false);
+        wp_register_script('Paystack', 'https://js.paystack.co/v1/inline.js', false, '1');
+        wp_enqueue_script('Paystack');
+        wp_enqueue_script('paystack_frontend', plugin_dir_url(__FILE__) . 'js/paystack-forms-public.js', false, $this->version);
+        wp_localize_script('paystack_frontend', 'give_paystack_settings', array('key'=> Paystack_Give_Public::fetchPublicKey()), $this->version, true, true);
 
     }
 
