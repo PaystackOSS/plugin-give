@@ -16,7 +16,7 @@
  * Plugin Name:       Paystack Payments for Give
  * Plugin URI:        http://wordpress.org/plugins/paystack-give
  * Description:       Paystack integration for accepting payments via card, bank accounts, USSD and mobile money
- * Version:           1.0.0
+ * Version:           1.2.0
  * Author:            Paystack
  * Author URI:        https://paystack.com
  * License:           GPL-2.0+
