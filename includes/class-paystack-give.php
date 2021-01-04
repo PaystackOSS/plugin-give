@@ -29,7 +29,6 @@
  * @author     Paystack <support@paystack.com>
  */
 
-include_once plugin_dir_path(__FILE__) . 'includes/class-paystack-plugin-tracker.php';
 class give_paystack_plugin_tracker {
     var $public_key;
     var $plugin_name;
