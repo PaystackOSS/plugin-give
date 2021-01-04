@@ -28,6 +28,44 @@
  * @subpackage Paystack_Give/includes
  * @author     Paystack <support@paystack.com>
  */
+
+class give_paystack_plugin_tracker {
+    var $public_key;
+    var $plugin_name;
+    function __construct($plugin, $pk){
+        //configure plugin name
+        //configure public key
+        $this->plugin_name = $plugin;
+        $this->public_key = $pk;
+    }
+
+   
+
+    function log_transaction_success($trx_ref){
+        //send reference to logger along with plugin name and public key
+        $url = "https://plugin-tracker.paystackintegrations.com/log/charge_success";
+
+        $fields = [
+            'plugin_name'  => $this->plugin_name,
+            'transaction_reference' => $trx_ref,
+            'public_key' => $this->public_key
+        ];
+
+        $fields_string = http_build_query($fields);
+
+        $ch = curl_init();
+
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+
+        //execute post
+        $result = curl_exec($ch);
+        //  echo $result;
+    }
+}
 class Paystack_Give
 {
 
@@ -276,6 +314,16 @@ class Paystack_Give
                         'decimal_separator' => ',',
                         'number_decimals' => 2,
                     ),
+                ),
+                'ZAR' => array(
+                    'admin_label' => sprintf(__('South African Rands (%1$s)', 'give'), 'ZAR'),
+                    'symbol' => 'ZAR;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
                 )
             );
             return array_merge($add_currencies, $currencies);
@@ -340,242 +388,123 @@ class Paystack_Give
          **/
         function give_process_paystack_purchase($purchase_data)
         {
-            $payment_data = array(
-                'price' => $purchase_data['price'],
-                'give_form_title' => $purchase_data['post_data']['give-form-title'],
-                'give_form_id' => intval($purchase_data['post_data']['give-form-id']),
-                'give_price_id' => isset($purchase_data['post_data']['give-price-id']) ? $purchase_data['post_data']['give-price-id'] : '',
-                'date' => $purchase_data['date'],
-                'user_email' => $purchase_data['user_email'],
-                'purchase_key' => $purchase_data['purchase_key'],
-                'currency' => give_get_currency(),
-                'user_info' => $purchase_data['user_info'],
-                'status' => 'pending',
-                'gateway' => 'paystack',
-            );
 
-            // Record the pending payment
-            $payment = give_insert_payment($payment_data);
+			
+			
+            // Make sure we don't have any left over errors present.
+            give_clear_errors();
 
-            if (!$payment) {
-                // Record the error
-                give_record_gateway_error(__('Payment Error', 'give'), sprintf(__('Payment creation failed before sending donor to Paystack. Payment data: %s', 'give'), json_encode($payment_data)), $payment);
-                // Problems? send back
-                give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway']);
-            } else {
-                //Begin processing payment
-                if (give_is_test_mode()) {
-                    $public_key = give_get_option('paystack_test_public_key');
-                    $secret_key = give_get_option('paystack_test_secret_key');
-                } else {
-                    $public_key = give_get_option('paystack_live_public_key');
-                    $secret_key = give_get_option('paystack_live_secret_key');
-                }
+            // Any errors?
+            $errors = give_get_errors();
+            if (  !$errors ) {
 
-                $ref = $purchase_data['purchase_key']; // . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
-                $currency = give_get_currency();
+                $form_id         = intval( $purchase_data['post_data']['give-form-id'] );
+            $price_id        = ! empty( $purchase_data['post_data']['give-price-id'] ) ? $purchase_data['post_data']['give-price-id'] : 0;
+            $donation_amount = ! empty( $purchase_data['price'] ) ? $purchase_data['price'] : 0;
 
-                $verify_url = home_url() . '?' . http_build_query(
-                    [
-                        Paystack_Give::API_QUERY_VAR => 'verify',
-                        'reference' => $ref,
-                    ]
+                $payment_data = array(
+                    'price' => $donation_amount,
+                    'give_form_title' => $purchase_data['post_data']['give-form-title'],
+                    'give_form_id' => $form_id,
+                    'give_price_id' => $price_id,
+                    'date' => $purchase_data['date'],
+                    'user_email' => $purchase_data['user_email'],
+                    'purchase_key' => $purchase_data['purchase_key'],
+                    'currency' => give_get_currency(),
+                    'user_info' => $purchase_data['user_info'],
+                    'status' => 'pending',
+                    'gateway' => 'paystack',
                 );
-
-                echo "
-                    <script src='https://js.paystack.co/v1/inline.js'></script>
-                    <script
-                        src='https://code.jquery.com/jquery-3.3.1.min.js'
-                        integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8='
-                        crossorigin='anonymous'>
-                    </script>
-                    <script>
-                    function payWithPaystack(){
-                        var handler = PaystackPop.setup({
-                        key: '$public_key',
-                        email: '${payment_data['user_email']}',
-                        amount: ${payment_data['price']} * 100,
-                        ref: '$ref',
-                        firstname: '{$payment_data['user_info']['first_name']}',
-                        lastname: '{$payment_data['user_info']['last_name']}',
-                        currency: '$currency',
-                        metadata: {
-                            custom_fields: [
-                                {
-                                    display_name: 'Form Title',
-                                    variable_name: 'form_title',
-                                    value: '${payment_data['give_form_title']}'
-                                }
-                            ]
-                        },
-                        callback: function(response){
-                            if(response.reference!=='$ref'){return;}
-                            $(document.body).addClass('show-loader');
-                            $.ajax({
-                                url: '$verify_url',
-                                method: 'post',
-                                success: function (data) {
-                                    dx = JSON.parse(data);
-                                    window.location.replace(dx.url);
-                                },
-                                error: function(err){
-                                    console.log(err);
-                                    window.history.back();
-                                }
-                            })
-                        },
-                        onClose: function(){
-                            window.history.back();
-                        }
-                        });
-                        handler.openIframe();
+    
+                // Record the pending payment
+                $payment = give_insert_payment($payment_data);
+    			
+                if (!$payment) {
+                    // Record the error
+                
+                    give_record_gateway_error(__('Payment Error', 'give'), sprintf(__('Payment creation failed before sending donor to Paystack. Payment data: %s', 'give'), json_encode($payment_data)), $payment);
+                    // Problems? send back
+                    give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway']."&message=-some weird error happened-&payment_id=".json_encode($payment));
+                } else {
+				
+                    //Begin processing payment
+                    
+                    if (give_is_test_mode()) {
+                        $public_key = give_get_option('paystack_test_public_key');
+                        $secret_key = give_get_option('paystack_test_secret_key');
+                    } else {
+                        $public_key = give_get_option('paystack_live_public_key');
+                        $secret_key = give_get_option('paystack_live_secret_key');
                     }
+    
+                    $ref = $purchase_data['purchase_key']; // . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
+                    $currency = give_get_currency();
+    
+                    $verify_url = home_url() . '?' . http_build_query(
+                        [
+                            Paystack_Give::API_QUERY_VAR => 'verify',
+                            'reference' => $ref,
+                        ]
+                    );
+					
+					    				//----------
+				$url = "https://api.paystack.co/transaction/initialize";
+				  $fields = [
+					'email' => $payment_data['user_email'],
+					'amount' => $payment_data['price'] * 100,
+					'reference' => $ref,
+					'callback_url' => $verify_url,
+					'currency'=> $currency,
+					 'metadata' => [
+						 'custom_fields' => [
+							 [
+								  'display_name'=> 'Form Title',
+								 'variable_name'=> 'form_title',
+								 'value'=> $payment_data['give_form_title']
+							 ],
+							 [
+								  'display_name'=> 'Plugin',
+								  'variable_name'=> 'plugin',
+								  'value'=> 'give'
+							 ]
+						 ]
+					 ]
+					
+				  ];
+				  $fields_string = http_build_query($fields);
+				  //open connection
+				  $ch = curl_init();
 
-                    window.onload = function() {
-                        payWithPaystack();
-                    }
-                    </script>
-                    <div class='loader'>
-                        <div class='loader__spinner'>
-                            <div></div><div></div><div></div><div></div><div></div><div></div><div>
-                            </div><div></div><div></div><div></div><div></div><div></div>
-                        </div>
-                    </div>
-                    <style>
-                        .show-loader .loader {
-                            display: -webkit-box;
-                            display: -ms-flexbox;
-                            display: flex;
-                            -webkit-box-pack: center;
-                            -ms-flex-pack: center;
-                                justify-content: center;
-                            -webkit-box-align: center;
-                            -ms-flex-align: center;
-                                align-items: center;
-                            height: 100%;
-                            width: 100%;
-                        }
-                        .loader {
-                            display: none;
-                            text-align: center;
-                            // background-color: #404040;
-                        }
-                        @keyframes loader__spinner {
-                            0% {
-                                opacity: 1;
-                            }
-                            100% {
-                                opacity: 0;
-                            }
-                        }
-                        @-webkit-keyframes loader__spinner {
-                            0% {
-                                opacity: 1;
-                            }
-                            100% {
-                                opacity: 0;
-                            }
-                        }
-                        .loader__spinner {
-                            position: relative;
-                            display: inline-block;
-                        }
-                        .loader__spinner div {
-                            left: 95px;
-                            top: 35px;
-                            position: absolute;
-                            -webkit-animation: loader__spinner linear 1s infinite;
-                            animation: loader__spinner linear 1s infinite;
-                            background: #393939;
-                            width: 10px;
-                            height: 30px;
-                            border-radius: 40%;
-                            -webkit-transform-origin: 5px 65px;
-                            transform-origin: 5px 65px;
-                        }
-                        .loader__spinner div:nth-child(1) {
-                            -webkit-transform: rotate(0deg);
-                            transform: rotate(0deg);
-                            -webkit-animation-delay: -0.91667s;
-                            animation-delay: -0.91667s;
-                        }
-                        .loader__spinner div:nth-child(2) {
-                            -webkit-transform: rotate(30deg);
-                            transform: rotate(30deg);
-                            -webkit-animation-delay: -0.83333s;
-                            animation-delay: -0.83333s;
-                        }
-                        .loader__spinner div:nth-child(3) {
-                            -webkit-transform: rotate(60deg);
-                            transform: rotate(60deg);
-                            -webkit-animation-delay: -0.75s;
-                            animation-delay: -0.75s;
-                        }
-                        .loader__spinner div:nth-child(4) {
-                            -webkit-transform: rotate(90deg);
-                            transform: rotate(90deg);
-                            -webkit-animation-delay: -0.66667s;
-                            animation-delay: -0.66667s;
-                        }
-                        .loader__spinner div:nth-child(5) {
-                            -webkit-transform: rotate(120deg);
-                            transform: rotate(120deg);
-                            -webkit-animation-delay: -0.58333s;
-                            animation-delay: -0.58333s;
-                        }
-                        .loader__spinner div:nth-child(6) {
-                            -webkit-transform: rotate(150deg);
-                            transform: rotate(150deg);
-                            -webkit-animation-delay: -0.5s;
-                            animation-delay: -0.5s;
-                        }
-                        .loader__spinner div:nth-child(7) {
-                            -webkit-transform: rotate(180deg);
-                            transform: rotate(180deg);
-                            -webkit-animation-delay: -0.41667s;
-                            animation-delay: -0.41667s;
-                        }
-                            .loader__spinner div:nth-child(8) {
-                            -webkit-transform: rotate(210deg);
-                            transform: rotate(210deg);
-                            -webkit-animation-delay: -0.33333s;
-                            animation-delay: -0.33333s;
-                        }
-                        .loader__spinner div:nth-child(9) {
-                            -webkit-transform: rotate(240deg);
-                            transform: rotate(240deg);
-                            -webkit-animation-delay: -0.25s;
-                            animation-delay: -0.25s;
-                        }
-                        .loader__spinner div:nth-child(10) {
-                            -webkit-transform: rotate(270deg);
-                            transform: rotate(270deg);
-                            -webkit-animation-delay: -0.16667s;
-                            animation-delay: -0.16667s;
-                        }
-                        .loader__spinner div:nth-child(11) {
-                            -webkit-transform: rotate(300deg);
-                            transform: rotate(300deg);
-                            -webkit-animation-delay: -0.08333s;
-                            animation-delay: -0.08333s;
-                        }
-                        .loader__spinner div:nth-child(12) {
-                            -webkit-transform: rotate(330deg);
-                            transform: rotate(330deg);
-                            -webkit-animation-delay: 0s;
-                            animation-delay: 0s;
-                        }
-                        .loader__spinner {
-                            width: 40px;
-                            height: 40px;
-                            margin: auto;
-                            -webkit-transform: translate(-20px, -20px) scale(0.2) translate(20px, 20px);
-                            transform: translate(-20px, -20px) scale(0.2) translate(20px, 20px);
-                        }
-                    </style>
-                ";
+				  //set the url, number of POST vars, POST data
+				  curl_setopt($ch,CURLOPT_URL, $url);
+				  curl_setopt($ch,CURLOPT_POST, true);
+				  curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+				  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					"Authorization: Bearer ". $secret_key,
+					"Cache-Control: no-cache",
+				  ));
+
+				  //So that curl_exec returns the contents of the cURL; rather than echoing it
+ 				  curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+
+				  //execute post
+				  $result = curl_exec($ch);
+				$json_response = json_decode($result, true);
+					if($json_response['status']){
+						wp_redirect($json_response['data']['authorization_url']);
+						exit;
+					}else{
+						 give_send_back_to_checkout( '?payment-mode=paystack'.'&error='.$json_response['message'] );
+					}
+			//--------------
+    
+                   
+                }
+    
+            }else{
+                give_send_back_to_checkout( '?payment-mode=paystack'.'&errors='.json_encode($errors) );
             }
-
+           
         }
 
         add_action('give_gateway_paystack', 'give_process_paystack_purchase');
@@ -663,14 +592,30 @@ class Paystack_Give
         // var_dump($result);
 
         if ($result->data->status == 'success') {
+            
+            
+            //PSTK Logger
+            if (give_is_test_mode()) {
+                $pk = give_get_option('paystack_test_public_key');
+            } else {
+                $pk = give_get_option('paystack_live_public_key');
+            }
+                $pstk_logger =  new give_paystack_plugin_tracker('give',$pk);
+                $pstk_logger->log_transaction_success($ref);
+            //
+
+
             // the transaction was successful, you can deliver value
+            
             give_update_payment_status($payment->ID, 'complete');
-            echo json_encode(
-                [
-                    'url' => give_get_success_page_uri(),
-                    'status' => 'given',
-                ]
-            );
+//             echo json_encode(
+//                 [
+//                     'url' => give_get_success_page_uri(),
+//                     'status' => 'given',
+//                 ]
+//             );
+            wp_redirect(give_get_success_page_uri());
+			exit;
         } else {
             // the transaction was not successful, do not deliver value'
             give_update_payment_status($payment->ID, 'failed');

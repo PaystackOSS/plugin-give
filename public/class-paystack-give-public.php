@@ -101,7 +101,6 @@ class Paystack_Give_Public
          */
 
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paystack-give-public.js', array( 'jquery' ), $this->version, false);
-
     }
 
 }
