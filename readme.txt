@@ -1,9 +1,9 @@
 === Paystack Payment for Give ===
-Contributors: paystack, steveamaza
+Contributors: paystack, steveamaza, lukman-paystack, whales-paystack
 Donate link: https://paystack.com/demo
 Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
-Tested up to: 5.5
+Tested up to: 5.6
 Stable tag: 1.0
 Requires PHP: 5.6
 License: GPLv3
