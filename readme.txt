@@ -1,10 +1,10 @@
 === Paystack Payment for Give ===
-Contributors: paystack, steveamaza, lukman-paystack, whales-paystack
+Contributors: paystack, steveamaza, tolukalejaiye, lukman008
 Donate link: https://paystack.com/demo
 Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
 Tested up to: 5.6
-Stable tag: 1.0
+Stable tag: 1.2.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -79,7 +79,13 @@ If you get stuck, you can ask for help in the [Paystack Payment for Give Plugin 
 Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/paystack-give) :)
 
 == Changelog ==
-1.2.0
+
+= 1.2.0 =
+* Fix compatibility issue with Give >2.8
+
+== Upgrade Notice ==
+
+= 1.2.0 =
 * Fix compatibility issue with Give >2.8
  
 == Screenshots ==
