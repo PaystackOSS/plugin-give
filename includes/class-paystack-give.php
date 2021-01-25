@@ -228,62 +228,6 @@ class Paystack_Give
 
         add_filter('give_payment_gateways', 'give_paystack_register_gateway', 1);
 
-        function give_paystack_settings($settings)
-        {
-
-            $check_settings = array(
-                array(
-                    'name' => __('Paystack', 'paystack-give'),
-                    'desc' => '',
-                    'type' => 'give_title',
-                    'id' => 'give_title_paystack',
-                ),
-                array(
-                    'name' => __('Test Secret Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Test Secret Key', 'paystack-give'),
-                    'id' => 'paystack_test_secret_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-test-secret-key',
-                ),
-                array(
-                    'name' => __('Test Public Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Test Public Key', 'paystack-give'),
-                    'id' => 'paystack_test_public_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-test-public-key',
-                ),
-                array(
-                    'name' => __('Live Secret Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Live Secret Key', 'paystack-give'),
-                    'id' => 'paystack_live_secret_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-live-secret-key',
-                ),
-                array(
-                    'name' => __('Live Public Key', 'paystack-give'),
-                    'desc' => __('Enter your Paystack Live Public Key', 'paystack-give'),
-                    'id' => 'paystack_live_public_key',
-                    'type' => 'text',
-                    'row_classes' => 'give-paystack-live-public-key',
-                ),
-                array(
-                    'name' => __('Billing Details', 'paystack-give'),
-                    'desc' => __('This will enable you to collect donor details. This is not required by Paystack (except email) but you might need to collect all information for record purposes', 'paystack-give'),
-                    'id' => 'paystack_billing_details',
-                    'type' => 'radio_inline',
-                    'default' => 'disabled',
-                    'options' => array(
-                        'enabled' => __('Enabled', 'paystack-give'),
-                        'disabled' => __('Disabled', 'paystack-give'),
-                    ),
-                ),
-            );
-
-            return array_merge($settings, $check_settings);
-        }
-
-        add_filter('give_settings_gateways', 'give_paystack_settings');
-
         /**
          * Filter the currencies
          * Note: you can register new currency by using this filter
