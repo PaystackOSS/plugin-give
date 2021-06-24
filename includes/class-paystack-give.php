@@ -268,7 +268,18 @@ class Paystack_Give
                         'decimal_separator' => ',',
                         'number_decimals' => 2,
                     ),
+                ),
+                'USD' => array(
+                    'admin_label' => sprintf(__('US Dollars (%1$s)', 'give'), 'USD'),
+                    'symbol' => 'USD;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
                 )
+
             );
             return array_merge($add_currencies, $currencies);
         }
