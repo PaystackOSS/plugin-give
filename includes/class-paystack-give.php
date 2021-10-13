@@ -29,19 +29,22 @@
  * @author     Paystack <support@paystack.com>
  */
 
-class give_paystack_plugin_tracker {
+class give_paystack_plugin_tracker
+{
     var $public_key;
     var $plugin_name;
-    function __construct($plugin, $pk){
+    function __construct($plugin, $pk)
+    {
         //configure plugin name
         //configure public key
         $this->plugin_name = $plugin;
         $this->public_key = $pk;
     }
 
-   
 
-    function log_transaction_success($trx_ref){
+
+    function log_transaction_success($trx_ref)
+    {
         //send reference to logger along with plugin name and public key
         $url = "https://plugin-tracker.paystackintegrations.com/log/charge_success";
 
@@ -55,11 +58,11 @@ class give_paystack_plugin_tracker {
 
         $ch = curl_init();
 
-        curl_setopt($ch,CURLOPT_URL, $url);
-        curl_setopt($ch,CURLOPT_POST, true);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
 
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         //execute post
         $result = curl_exec($ch);
@@ -167,7 +170,6 @@ class Paystack_Give
         include_once plugin_dir_path(dirname(__FILE__)) . 'public/class-paystack-give-public.php';
 
         $this->loader = new Paystack_Give_Loader();
-
     }
 
     /**
@@ -185,7 +187,6 @@ class Paystack_Give
         $plugin_i18n = new Paystack_Give_i18n();
 
         $this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
-
     }
 
     /**
@@ -268,15 +269,24 @@ class Paystack_Give
                         'decimal_separator' => ',',
                         'number_decimals' => 2,
                     ),
+                ),
+                'USD' => array(
+                    'admin_label' => sprintf(__('US Dollars (%1$s)', 'give'), 'USD'),
+                    'symbol' => 'USD;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
                 )
             );
             return array_merge($add_currencies, $currencies);
         }
-        
+
         add_filter('give_currencies', 'give_paystack_add_currencies');
 
         add_action('parse_request', array($this, 'handle_api_requests'), 0);
-
     }
 
     public function handle_api_requests()
@@ -292,9 +302,7 @@ class Paystack_Give
                 $this->verify_transaction();
                 die();
             }
-
         }
-
     }
 
     /**
@@ -333,18 +341,18 @@ class Paystack_Give
         function give_process_paystack_purchase($purchase_data)
         {
 
-			
-			
+
+
             // Make sure we don't have any left over errors present.
             give_clear_errors();
 
             // Any errors?
             $errors = give_get_errors();
-            if (  !$errors ) {
+            if (!$errors) {
 
-                $form_id         = intval( $purchase_data['post_data']['give-form-id'] );
-            $price_id        = ! empty( $purchase_data['post_data']['give-price-id'] ) ? $purchase_data['post_data']['give-price-id'] : 0;
-            $donation_amount = ! empty( $purchase_data['price'] ) ? $purchase_data['price'] : 0;
+                $form_id         = intval($purchase_data['post_data']['give-form-id']);
+                $price_id        = !empty($purchase_data['post_data']['give-price-id']) ? $purchase_data['post_data']['give-price-id'] : 0;
+                $donation_amount = !empty($purchase_data['price']) ? $purchase_data['price'] : 0;
 
                 $payment_data = array(
                     'price' => $donation_amount,
@@ -359,20 +367,20 @@ class Paystack_Give
                     'status' => 'pending',
                     'gateway' => 'paystack',
                 );
-    
+
                 // Record the pending payment
                 $payment = give_insert_payment($payment_data);
-    			
+
                 if (!$payment) {
                     // Record the error
-                
+
                     give_record_gateway_error(__('Payment Error', 'give'), sprintf(__('Payment creation failed before sending donor to Paystack. Payment data: %s', 'give'), json_encode($payment_data)), $payment);
                     // Problems? send back
-                    give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway']."&message=-some weird error happened-&payment_id=".json_encode($payment));
+                    give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway'] . "&message=-some weird error happened-&payment_id=" . json_encode($payment));
                 } else {
-				
+
                     //Begin processing payment
-                    
+
                     if (give_is_test_mode()) {
                         $public_key = give_get_option('paystack_test_public_key');
                         $secret_key = give_get_option('paystack_test_secret_key');
@@ -380,79 +388,76 @@ class Paystack_Give
                         $public_key = give_get_option('paystack_live_public_key');
                         $secret_key = give_get_option('paystack_live_secret_key');
                     }
-    
+
                     $ref = $purchase_data['purchase_key']; // . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
                     $currency = give_get_currency();
-    
+
                     $verify_url = home_url() . '?' . http_build_query(
                         [
                             Paystack_Give::API_QUERY_VAR => 'verify',
                             'reference' => $ref,
                         ]
                     );
-					
-					    				//----------
-				$url = "https://api.paystack.co/transaction/initialize";
-				  $fields = [
-					'email' => $payment_data['user_email'],
-					'amount' => $payment_data['price'] * 100,
-					'reference' => $ref,
-					'callback_url' => $verify_url,
-					'currency'=> $currency,
-					 'metadata' => [
-						 'custom_fields' => [
-							 [
-								  'display_name'=> 'Form Title',
-								 'variable_name'=> 'form_title',
-								 'value'=> $payment_data['give_form_title']
-							 ],
-							 [
-								  'display_name'=> 'Plugin',
-								  'variable_name'=> 'plugin',
-								  'value'=> 'give'
-							 ]
-						 ]
-					 ]
-					
-				  ];
-				  $fields_string = http_build_query($fields);
-				  //open connection
-				  $ch = curl_init();
 
-				  //set the url, number of POST vars, POST data
-				  curl_setopt($ch,CURLOPT_URL, $url);
-				  curl_setopt($ch,CURLOPT_POST, true);
-				  curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-				  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-					"Authorization: Bearer ". $secret_key,
-					"Cache-Control: no-cache",
-				  ));
+                    //----------
+                    $url = "https://api.paystack.co/transaction/initialize";
+                    $fields = [
+                        'email' => $payment_data['user_email'],
+                        'amount' => $payment_data['price'] * 100,
+                        'reference' => $ref,
+                        'callback_url' => $verify_url,
+                        'currency' => $currency,
+                        'metadata' => [
+                            'custom_fields' => [
+                                [
+                                    'display_name' => 'Form Title',
+                                    'variable_name' => 'form_title',
+                                    'value' => $payment_data['give_form_title']
+                                ],
+                                [
+                                    'display_name' => 'Plugin',
+                                    'variable_name' => 'plugin',
+                                    'value' => 'give'
+                                ]
+                            ]
+                        ]
 
-				  //So that curl_exec returns the contents of the cURL; rather than echoing it
- 				  curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+                    ];
+                    $fields_string = http_build_query($fields);
+                    //open connection
+                    $ch = curl_init();
 
-				  //execute post
-				  $result = curl_exec($ch);
-				$json_response = json_decode($result, true);
-					if($json_response['status']){
-						wp_redirect($json_response['data']['authorization_url']);
-						exit;
-					}else{
-						 give_send_back_to_checkout( '?payment-mode=paystack'.'&error='.$json_response['message'] );
-					}
-			//--------------
-    
-                   
+                    //set the url, number of POST vars, POST data
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        "Authorization: Bearer " . $secret_key,
+                        "Cache-Control: no-cache",
+                    ));
+
+                    //So that curl_exec returns the contents of the cURL; rather than echoing it
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                    //execute post
+                    $result = curl_exec($ch);
+                    $json_response = json_decode($result, true);
+                    if ($json_response['status']) {
+                        wp_redirect($json_response['data']['authorization_url']);
+                        exit;
+                    } else {
+                        give_send_back_to_checkout('?payment-mode=paystack' . '&error=' . $json_response['message']);
+                    }
+                    //--------------
+
+
                 }
-    
-            }else{
-                give_send_back_to_checkout( '?payment-mode=paystack'.'&errors='.json_encode($errors) );
+            } else {
+                give_send_back_to_checkout('?payment-mode=paystack' . '&errors=' . json_encode($errors));
             }
-           
         }
 
         add_action('give_gateway_paystack', 'give_process_paystack_purchase');
-
     }
 
     /**
@@ -486,7 +491,6 @@ class Paystack_Give
     public function get_loader()
     {
         return $this->loader;
-
     }
 
     /**
@@ -522,7 +526,7 @@ class Paystack_Give
                 'Authorization' => 'Bearer ' . $secret_key,
             ),
         );
-        
+
         $request = wp_remote_get($url, $args);
 
         if (is_wp_error($request)) {
@@ -536,30 +540,30 @@ class Paystack_Give
         // var_dump($result);
 
         if ($result->data->status == 'success') {
-            
-            
+
+
             //PSTK Logger
             if (give_is_test_mode()) {
                 $pk = give_get_option('paystack_test_public_key');
             } else {
                 $pk = give_get_option('paystack_live_public_key');
             }
-                $pstk_logger =  new give_paystack_plugin_tracker('give',$pk);
-                $pstk_logger->log_transaction_success($ref);
+            $pstk_logger =  new give_paystack_plugin_tracker('give', $pk);
+            $pstk_logger->log_transaction_success($ref);
             //
 
 
             // the transaction was successful, you can deliver value
-            
+
             give_update_payment_status($payment->ID, 'complete');
-//             echo json_encode(
-//                 [
-//                     'url' => give_get_success_page_uri(),
-//                     'status' => 'given',
-//                 ]
-//             );
+            //             echo json_encode(
+            //                 [
+            //                     'url' => give_get_success_page_uri(),
+            //                     'status' => 'given',
+            //                 ]
+            //             );
             wp_redirect(give_get_success_page_uri());
-			exit;
+            exit;
         } else {
             // the transaction was not successful, do not deliver value'
             give_update_payment_status($payment->ID, 'failed');
@@ -570,7 +574,6 @@ class Paystack_Give
                     'message' => "Transaction was not successful: Last gateway response was: " . $result['data']['gateway_response'],
                 ]
             );
-        }    
+        }
     }
-
 }
