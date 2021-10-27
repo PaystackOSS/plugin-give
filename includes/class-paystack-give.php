@@ -270,6 +270,16 @@ class Paystack_Give
                         'number_decimals' => 2,
                     ),
                 ),
+                'KES' => array(
+                    'admin_label' => sprintf(__('Kenyan Shillings (%1$s)', 'give'), 'KES'),
+                    'symbol' => 'KES;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
+                ),
                 'USD' => array(
                     'admin_label' => sprintf(__('US Dollars (%1$s)', 'give'), 'USD'),
                     'symbol' => 'USD;',
