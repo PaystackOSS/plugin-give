@@ -94,6 +94,10 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 
 == Upgrade Notice ==
 
+= 1.4.0 =
+* Add support for KES
+* Fix compatibility with WordPress 5.8
+
 = 1.3.0 =
 * Fix compatibility with WordPress 5.7
  
