@@ -3,19 +3,19 @@ Contributors: paystack, steveamaza, tolukalejaiye, lukman008
 Donate link: https://paystack.com/demo
 Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
-Tested up to: 5.7
-Stable tag: 1.3.0
+Tested up to: 5.8
+Stable tag: 1.4.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-The Paystack Payment for Give allows site owners from Nigeria, Ghana and South Africa to accept donations from their customers, anywhere on the Give plugin platform.  
+The Paystack Payment for Give allows site owners from Nigeria, Ghana, South Africa and Kenya to accept donations from their customers, anywhere on the Give plugin platform.  
 
 == Description ==
 
 Give is one the foremost WordPress donation plugins. It's robust, flexible, and easy to use.
 
-The **Paystack Payment for Give** allows site owners from Nigeria, Ghana and South Africa to accept payments from their customers, anywhere.
+The **Paystack Payment for Give** allows site owners from Nigeria, Ghana, South Africa and Kenya to accept payments from their customers, anywhere.
 
 To be able to use the Paystack Payment for Give plugin, you must [have an account on Paystack](https://dashboard.paystack.com/) from which you will get Test and Live API keys to connect the plugin to your Paystack business.
 
@@ -78,7 +78,12 @@ If you get stuck, you can ask for help in the [Paystack Payment for Give Plugin 
  
 Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/paystack-give) :)
 
+
 == Changelog ==
+
+= 1.4.0 =
+* Add support for KES
+* Fix compatibility with WordPress 5.8
 
 = 1.3.0 =
 * Fix compatibility with WordPress 5.7
@@ -88,6 +93,10 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 * Fix compatibility issue with Give >2.8
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+* Add support for KES
+* Fix compatibility with WordPress 5.8
 
 = 1.3.0 =
 * Fix compatibility with WordPress 5.7
