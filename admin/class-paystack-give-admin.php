@@ -207,6 +207,20 @@ class Paystack_Give_Admin
                         'row_classes' => 'give-paystack-test-public-key',
                     ],
                     [
+                        'name'        => esc_html__( 'Test Subaccount Code', 'paystack-give' ),
+                        'desc'        => esc_html__( 'Enter your Paystack Test Subaccount Code', 'paystack-give' ),
+                        'id'          => 'paystack_test_subaccount_code',
+                        'type'        => 'text',
+                        'row_classes' => 'give-paystack-test-subaccount-code',
+                    ],
+                    [
+                        'name'        => esc_html__( 'Test Split Code', 'paystack-give' ),
+                        'desc'        => esc_html__( 'Enter your Paystack Test Split Code', 'paystack-give' ),
+                        'id'          => 'paystack_test_split_code',
+                        'type'        => 'text',
+                        'row_classes' => 'give-paystack-test-split-code',
+                    ],
+                    [
                         'name'        => esc_html__( 'Live Secret Key', 'paystack-give' ),
                         'desc'        => esc_html__( 'Enter your Paystack Live Secret Key', 'paystack-give' ),
                         'id'          => 'paystack_live_secret_key',
@@ -219,6 +233,20 @@ class Paystack_Give_Admin
                         'id'          => 'paystack_live_public_key',
                         'type'        => 'text',
                         'row_classes' => 'give-paystack-live-public-key',
+                    ],
+                    [
+                        'name'        => esc_html__( 'Live Subaccount Code', 'paystack-give' ),
+                        'desc'        => esc_html__( 'Enter your Paystack Live Subaccount Code', 'paystack-give' ),
+                        'id'          => 'paystack_live_subaccount_code',
+                        'type'        => 'text',
+                        'row_classes' => 'give-paystack-live-subaccount-code',
+                    ],
+                    [
+                        'name'        => esc_html__( 'Live Split Code', 'paystack-give' ),
+                        'desc'        => esc_html__( 'Enter your Paystack Live Split Code', 'paystack-give' ),
+                        'id'          => 'paystack_live_split_code',
+                        'type'        => 'text',
+                        'row_classes' => 'give-paystack-live-split-code',
                     ],
                     [
                         'name'    => esc_html__( 'Billing Details', 'paystack-give' ),
