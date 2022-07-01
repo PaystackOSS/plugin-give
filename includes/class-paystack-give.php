@@ -389,14 +389,18 @@ class Paystack_Give
                     give_send_back_to_checkout('?payment-mode=' . $purchase_data['post_data']['give-gateway'] . "&message=-some weird error happened-&payment_id=" . json_encode($payment));
                 } else {
 
-                    //Begin processing payment
+                    // Begin processing payment
 
                     if (give_is_test_mode()) {
                         $public_key = give_get_option('paystack_test_public_key');
                         $secret_key = give_get_option('paystack_test_secret_key');
+                        $subaccount_code = give_get_option('paystack_test_subaccount_code');
+                        $split_code = give_get_option('paystack_test_split_code');
                     } else {
                         $public_key = give_get_option('paystack_live_public_key');
                         $secret_key = give_get_option('paystack_live_secret_key');
+                        $subaccount_code = give_get_option('paystack_live_subaccount_code');
+                        $split_code = give_get_option('paystack_live_split_code');
                     }
 
                     $ref = $purchase_data['purchase_key']; // . '-' . time() . '-' . preg_replace("/[^0-9a-z_]/i", "_", $purchase_data['user_email']);
@@ -414,6 +418,8 @@ class Paystack_Give
                     $fields = [
                         'email' => $payment_data['user_email'],
                         'amount' => $payment_data['price'] * 100,
+                        'subaccount' => $subaccount_code,
+                        'split_code' => $split_code,
                         'reference' => $ref,
                         'callback_url' => $verify_url,
                         'currency' => $currency,
