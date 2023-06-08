@@ -16,7 +16,7 @@
  * Plugin Name:       Paystack Payments for Give
  * Plugin URI:        http://wordpress.org/plugins/paystack-give
  * Description:       Paystack integration for accepting payments via card, bank accounts, USSD and mobile money
- * Version:           1.2.1
+ * Version:           2.0.0
  * Author:            Paystack
  * Author URI:        https://paystack.com
  * License:           GPL-2.0+
@@ -26,7 +26,7 @@
  */
 
 // If this file is called directly, abort.
-if (! defined('WPINC') ) {
+if (!defined('WPINC')) {
     die;
 }
 
@@ -35,13 +35,13 @@ if (! defined('WPINC') ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('PLUGIN_NAME_VERSION', '1.2.0');
+define('PLUGIN_NAME_VERSION', '2.0.0');
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-paystack-give-activator.php
  */
-function activate_paystack_give() 
+function activate_paystack_give()
 {
     include_once plugin_dir_path(__FILE__) . 'includes/class-paystack-give-activator.php';
     Paystack_Give_Activator::activate();
@@ -51,7 +51,7 @@ function activate_paystack_give()
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-paystack-give-deactivator.php
  */
-function deactivate_paystack_give() 
+function deactivate_paystack_give()
 {
     include_once plugin_dir_path(__FILE__) . 'includes/class-paystack-give-deactivator.php';
     Paystack_Give_Deactivator::deactivate();
@@ -75,11 +75,10 @@ require plugin_dir_path(__FILE__) . 'includes/class-paystack-give.php';
  *
  * @since 1.0.0
  */
-function run_paystack_give() 
+function run_paystack_give()
 {
 
     $plugin = new Paystack_Give();
     $plugin->run();
-
 }
 run_paystack_give();
