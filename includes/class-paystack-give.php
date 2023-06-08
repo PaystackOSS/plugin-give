@@ -271,6 +271,7 @@ class Paystack_Give
                     ),
                 ),
                 'KES' => array(
+
                     'admin_label' => sprintf(__('Kenyan Shillings (%1$s)', 'give'), 'KES'),
                     'symbol' => 'KES;',
                     'setting' => array(
@@ -280,6 +281,28 @@ class Paystack_Give
                         'number_decimals' => 2,
                     ),
                 ),
+
+                'XOF' => array(
+                    'admin_label' => sprintf(__('West African CFA Franc (%1$s)', 'give'), 'XOF'),
+                    'symbol' => 'XOF;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
+                ),
+                'EGP' => array(
+                    'admin_label' => sprintf(__('Egyptian Pound (%1$s)', 'give'), 'EGP'),
+                    'symbol' => 'EGP;',
+                    'setting' => array(
+                        'currency_position' => 'before',
+                        'thousands_separator' => '.',
+                        'decimal_separator' => ',',
+                        'number_decimals' => 2,
+                    ),
+                ),
+
                 'USD' => array(
                     'admin_label' => sprintf(__('US Dollars (%1$s)', 'give'), 'USD'),
                     'symbol' => 'USD;',
