@@ -81,6 +81,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 
 == Changelog ==
 
+= 2.0.1=
+* Compatibility with WordPress 6.2 and 8
+
 = 2.0.0 =
 * Compatibility with WordPress 5.9 and PHP 8
 
@@ -96,6 +99,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 * Fix compatibility issue with Give >2.8
 
 == Upgrade Notice ==
+
+= 2.0.1=
+* Compatibility with WordPress 6.2 and 8
 
 = 2.0.0 =
 * Compatibility with WordPress 5.9 and PHP 8
