@@ -81,6 +81,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 
 == Changelog ==
 
+= 2.0.2 =
+* Add support for XOF & EGP
+
 = 2.0.1 =
 * Compatibility with WordPress 6.2 and PHP 8
 
