@@ -1,5 +1,5 @@
 === Paystack Payment for Give ===
-Contributors: paystack, steveamaza, tolukalejaiye, lukman008
+Contributors: paystack, steveamaza, tolukalejaiye, lukman008, KaneahAbagale
 Donate link: https://paystack.com/demo
 Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
