@@ -3,8 +3,8 @@ Contributors: paystack, steveamaza, tolukalejaiye, lukman008, KaneahAbagale
 Donate link: https://paystack.com/demo
 Tags: give, paystack, payment, donation
 Requires at least: 3.0.1
-Tested up to: 6.2
-Stable tag: 2.0.1
+Tested up to: 6.6
+Stable tag: 2.0.3
 Requires PHP: 5.6 and higher
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -81,6 +81,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 
 == Changelog ==
 
+= 2.0.3 =
+* Compatibility with WordPress 6.6 and PHP 8.3
+
 = 2.0.2 =
 * Add support for XOF & EGP
 
@@ -102,6 +105,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/PaystackHQ/pa
 * Fix compatibility issue with Give >2.8
 
 == Upgrade Notice ==
+
+= 2.0.3 =
+* Compatibility with WordPress 6.6 and PHP 8.3
 
 = 2.0.1 =
 * Compatibility with WordPress 6.2 and PHP 8
