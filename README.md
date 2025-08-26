@@ -2,7 +2,13 @@
 
 # Paystack Payment for Give
 
-Welcome to the Paystack Payment for Give repository on GitHub. Here you can browse the source, look at open issues and keep track of development. 
+> ⚠️ **IMPORTANT NOTICE**: This repository is no longer actively maintained.
+> 
+> **Please use the actively maintained fork**: [give-paystack-gateway](https://github.com/impress-org/give-paystack-gateway)
+> 
+> The fork is maintained by [Impress.org](https://impress.org), the developers of the GiveWP plugin, and serves as the single source of truth going forward. All future development, bug fixes, and support will be handled in the new repository.
+
+Welcome to the Paystack Payment for Give repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 
 If you are a developer, you can join our Developer Community on [Slack](https://slack.paystack.com).
 
@@ -29,11 +35,15 @@ Contained within this repo, is a dockerfile and a docker-compose file to quickly
 * [Paystack Helpdesk](https://paystack.com/help)
 
 ## Support
-This repository is not suitable for general Paystack support. Please use the issue tracker for bug reports and feature requests directly related to this plugin. For general support, you can reach out by 
+⚠️ **This repository is no longer maintained.** For support, please visit the [actively maintained fork](https://github.com/impress-org/give-paystack-gateway) maintained by Impress.org.
+
+For legacy support related to this archived repository, you can reach out by:
 
 * sending a message from [our website](https://paystack.com/contact).
 * posting an issues on the plugin [support forum](https://wordpress.org/support/plugin/paystack-for-give).
 
 ## Contributing to Paystack Payment for Give
 
-If you have a patch or have stumbled upon an issue with the Paystack Gateway for Paid Membership Pro plugin, you can contribute this back to the code. Please read our [contributor guidelines](https://github.com/PaystackHQ/wordpress-payment-forms-for-paystack/blob/master/.github/CONTRIBUTING.md) for more information how you can do this.
+⚠️ **This repository is no longer maintained.** Please contribute to the [actively maintained fork](https://github.com/impress-org/give-paystack-gateway) maintained by Impress.org.
+
+For legacy information about contributing to this archived repository, you can read our [contributor guidelines](https://github.com/PaystackHQ/wordpress-payment-forms-for-paystack/blob/master/.github/CONTRIBUTING.md).
