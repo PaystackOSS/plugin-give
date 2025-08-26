@@ -35,15 +35,11 @@ Contained within this repo, is a dockerfile and a docker-compose file to quickly
 * [Paystack Helpdesk](https://paystack.com/help)
 
 ## Support
-⚠️ **This repository is no longer maintained.** For support, please visit the [actively maintained fork](https://github.com/impress-org/give-paystack-gateway) maintained by Impress.org.
-
-For legacy support related to this archived repository, you can reach out by:
+This repository is not suitable for general Paystack support. Please use the issue tracker for bug reports and feature requests directly related to this plugin. For general support, you can reach out by 
 
 * sending a message from [our website](https://paystack.com/contact).
 * posting an issues on the plugin [support forum](https://wordpress.org/support/plugin/paystack-for-give).
 
 ## Contributing to Paystack Payment for Give
 
-⚠️ **This repository is no longer maintained.** Please contribute to the [actively maintained fork](https://github.com/impress-org/give-paystack-gateway) maintained by Impress.org.
-
-For legacy information about contributing to this archived repository, you can read our [contributor guidelines](https://github.com/PaystackHQ/wordpress-payment-forms-for-paystack/blob/master/.github/CONTRIBUTING.md).
+If you have a patch or have stumbled upon an issue with the Paystack Gateway for Paid Membership Pro plugin, you can contribute this back to the code. Please read our [contributor guidelines](https://github.com/PaystackHQ/wordpress-payment-forms-for-paystack/blob/master/.github/CONTRIBUTING.md) for more information how you can do this.
