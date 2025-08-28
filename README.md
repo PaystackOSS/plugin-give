@@ -2,7 +2,13 @@
 
 # Paystack Payment for Give
 
-Welcome to the Paystack Payment for Give repository on GitHub. Here you can browse the source, look at open issues and keep track of development. 
+> ⚠️ **IMPORTANT NOTICE**: This repository is no longer actively maintained.
+> 
+> **Please use the actively maintained fork**: [give-paystack-gateway](https://github.com/impress-org/give-paystack-gateway)
+> 
+> The fork is maintained by [Impress.org](https://impress.org), the developers of the GiveWP plugin, and serves as the single source of truth going forward. All future development, bug fixes, and support will be handled in the new repository.
+
+Welcome to the Paystack Payment for Give repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 
 If you are a developer, you can join our Developer Community on [Slack](https://slack.paystack.com).
 
